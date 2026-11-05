@@ -109,10 +109,47 @@ final class SynchronizedMacroTests: XCTestCase {
                     message:
                         "@Synchronized requires a 'final' class; only final classes can be Sendable",
                     line: 2,
-                    column: 1
+                    column: 1,
+                    fixIts: [FixItSpec(message: "Add 'final'")]
                 )
             ],
-            macroSpecs: macros
+            macroSpecs: macros,
+            applyFixIts: ["Add 'final'"],
+            fixedSource: """
+                @Synchronized
+                final class Settings {
+                }
+                """
+        )
+    }
+
+    func testRequiresFinalClassWithModifiers() {
+        assertMacroExpansion(
+            """
+            @Synchronized
+            public class Settings {
+            }
+            """,
+            expandedSource: """
+                public class Settings {
+                }
+                """,
+            diagnostics: [
+                DiagnosticSpec(
+                    message:
+                        "@Synchronized requires a 'final' class; only final classes can be Sendable",
+                    line: 2,
+                    column: 8,
+                    fixIts: [FixItSpec(message: "Add 'final'")]
+                )
+            ],
+            macroSpecs: macros,
+            applyFixIts: ["Add 'final'"],
+            fixedSource: """
+                @Synchronized
+                public final class Settings {
+                }
+                """
         )
     }
 

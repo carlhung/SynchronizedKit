@@ -60,8 +60,29 @@ public struct SynchronizedMacro: MemberMacro, MemberAttributeMacro, ExtensionMac
             ])
         }
         guard classDecl.modifiers.contains(where: { $0.name.tokenKind == .keyword(.final) }) else {
+            // A macro can't rewrite the class it's attached to, so offer a
+            // fix-it that inserts `final` right before the `class` keyword.
+            var finalClass = classDecl
+            finalClass.modifiers.append(
+                DeclModifierSyntax(
+                    name: .keyword(
+                        .final,
+                        leadingTrivia: classDecl.classKeyword.leadingTrivia,
+                        trailingTrivia: .space
+                    )
+                )
+            )
+            finalClass.classKeyword.leadingTrivia = []
             throw DiagnosticsError(diagnostics: [
-                Diagnostic(node: classDecl.classKeyword, message: SynchronizedDiagnostic.notFinal)
+                Diagnostic(
+                    node: classDecl.classKeyword,
+                    message: SynchronizedDiagnostic.notFinal,
+                    fixIt: .replace(
+                        message: SynchronizedFixIt.addFinal,
+                        oldNode: classDecl,
+                        newNode: finalClass
+                    )
+                )
             ])
         }
         // Already declared `Sendable` by hand: nothing to add.
@@ -260,6 +281,21 @@ enum SynchronizedDiagnostic: DiagnosticMessage {
     }
 
     var severity: DiagnosticSeverity { .error }
+}
+
+enum SynchronizedFixIt: FixItMessage {
+    case addFinal
+
+    var message: String {
+        switch self {
+        case .addFinal:
+            "Add 'final'"
+        }
+    }
+
+    var fixItID: MessageID {
+        MessageID(domain: "SynchronizedKit", id: "\(self)")
+    }
 }
 
 extension VariableDeclSyntax {

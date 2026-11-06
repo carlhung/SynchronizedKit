@@ -25,7 +25,10 @@ let package = Package(
         ),
         .target(
             name: "SynchronizedKit",
-            dependencies: ["SynchronizedKitMacros"]
+            dependencies: ["SynchronizedKitMacros"],
+            swiftSettings: [
+                .enableExperimentalFeature("CoroutineAccessors")
+            ]
         ),
         .testTarget(
             name: "SynchronizedKitTests",

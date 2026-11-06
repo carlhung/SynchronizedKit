@@ -10,7 +10,7 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
         value = initialValue
     }
 
-    public func withLock<Result, E>(
+    public func withLock<Result: ~Copyable, E>(
         _ body: (inout sending Value) throws(E) -> sending Result
     ) throws(E) -> sending Result {
         lock.lock()

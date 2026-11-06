@@ -2,7 +2,6 @@ import Foundation
 
 @dynamicMemberLookup
 public final class LockedValue<Value: ~Copyable>: Sendable {
-    // Safe because every access to `value` happens while holding `lock`.
     private let lock = NSRecursiveLock()
     nonisolated(unsafe)
         private var value: Value

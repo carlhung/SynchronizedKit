@@ -30,9 +30,6 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
     public subscript<Subject>(
         dynamicMember keyPath: WritableKeyPath<Value, Subject>
     ) -> Subject {
-        // self.lock.lock()
-        // defer { lock.unlock() }
-        // return value[keyPath: keyPath]
         yielding borrow {
             lock.lock()
             defer { lock.unlock() }
@@ -40,7 +37,7 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
         }
         yielding mutate {
             lock.lock()
-            defer { lock.unlock() }  // also runs if the access is aborted (e.g. a throw)
+            defer { lock.unlock() }
             yield &value[keyPath: keyPath]
         }
     }

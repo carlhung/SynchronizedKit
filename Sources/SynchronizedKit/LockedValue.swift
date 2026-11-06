@@ -39,5 +39,10 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
             defer { lock.unlock() }
             yield &value[keyPath: keyPath]
         }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            value[keyPath: keyPath] = newValue
+        }
     }
 }

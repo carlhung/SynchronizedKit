@@ -124,7 +124,6 @@ public struct SynchronizedPropertyMacro: AccessorMacro, PeerMacro {
                 defer {
                     \(lock).unlock()
                 }
-                SynchronizedKit::_synchronizedSendable(\(storage))
                 yield \(storage)
             }
             """

@@ -41,8 +41,3 @@ public macro SynchronizedProperty() =
 /// The lock type `@Synchronized` declares. Spelled through this module so
 /// expanded code compiles even where the file doesn't import Foundation.
 public typealias SynchronizedLock = NSRecursiveLock
-
-/// Used by expanded getters: fails to compile when a property's type isn't
-/// `Sendable`, and inlines away to nothing otherwise.
-@inlinable @inline(__always)
-public func _synchronizedSendable<Value: Sendable>(_ value: Value) {}

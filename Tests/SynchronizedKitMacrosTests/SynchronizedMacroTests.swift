@@ -30,7 +30,6 @@ final class SynchronizedMacroTests: XCTestCase {
                             defer {
                                 _synchronizedStaticLock.unlock()
                             }
-                            SynchronizedKit::_synchronizedSendable(_shared)
                             yield _shared
                         }
                         set {
@@ -61,7 +60,6 @@ final class SynchronizedMacroTests: XCTestCase {
                             defer {
                                 _synchronizedLock.unlock()
                             }
-                             SynchronizedKit::_synchronizedSendable(_name)
                             yield _name
                         }
                         set {

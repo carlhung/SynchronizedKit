@@ -25,12 +25,13 @@ final class SynchronizedMacroTests: XCTestCase {
             expandedSource: """
                 final class Settings {
                     static var shared: Settings {
-                        get {
+                        _read {
                             _synchronizedStaticLock.lock()
                             defer {
                                 _synchronizedStaticLock.unlock()
                             }
-                            return SynchronizedKit::_synchronizedSendable(_shared)
+                            SynchronizedKit::_synchronizedSendable(_shared)
+                            yield _shared
                         }
                         set {
                             _synchronizedStaticLock.lock()
@@ -55,12 +56,13 @@ final class SynchronizedMacroTests: XCTestCase {
                         init(initialValue) {
                             _name = initialValue
                         }
-                        get {
+                        _read {
                             _synchronizedLock.lock()
                             defer {
                                 _synchronizedLock.unlock()
                             }
-                            return SynchronizedKit::_synchronizedSendable(_name)
+                             SynchronizedKit::_synchronizedSendable(_name)
+                            yield _name
                         }
                         set {
                             _synchronizedLock.lock()

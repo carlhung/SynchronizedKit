@@ -119,12 +119,13 @@ public struct SynchronizedPropertyMacro: AccessorMacro, PeerMacro {
         }
         accessors.append(
             """
-            get {
+            _read {
                 \(lock).lock()
                 defer {
                     \(lock).unlock()
                 }
-                return SynchronizedKit::_synchronizedSendable(\(storage))
+                SynchronizedKit::_synchronizedSendable(\(storage))
+                yield \(storage)
             }
             """
         )

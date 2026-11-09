@@ -18,7 +18,7 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
         return try body(&value)
     }
 
-    public subscript<Subject>(dynamicMember keyPath: KeyPath<Value, Subject>) -> Subject {
+    public subscript<Subject>(dynamicMember keyPath: KeyPath<Value, Subject>) -> sending Subject {
         yielding borrow {
             lock.lock()
             defer { lock.unlock() }
@@ -28,7 +28,7 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
 
     public subscript<Subject>(
         dynamicMember keyPath: WritableKeyPath<Value, Subject>
-    ) -> Subject {
+    ) -> sending Subject {
         yielding borrow {
             lock.lock()
             defer { lock.unlock() }

@@ -18,7 +18,7 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
         return try body(&value)
     }
 
-    public subscript<Subject>(dynamicMember keyPath: KeyPath<Value, Subject>) -> sending Subject {
+    public subscript<Subject>(dynamicMember keyPath: KeyPath<Value, Subject>) -> Subject {
         yielding borrow {
             lock.lock()
             defer { lock.unlock() }
@@ -26,23 +26,31 @@ public final class LockedValue<Value: ~Copyable>: Sendable {
         }
     }
 
-    public subscript<Subject>(
-        dynamicMember keyPath: WritableKeyPath<Value, Subject>
-    ) -> sending Subject {
-        yielding borrow {
-            lock.lock()
-            defer { lock.unlock() }
-            yield value[keyPath: keyPath]
-        }
-        yielding mutate {
-            lock.lock()
-            defer { lock.unlock() }
-            yield &value[keyPath: keyPath]
-        }
-        set {
-            lock.lock()
-            defer { lock.unlock() }
-            value[keyPath: keyPath] = newValue
-        }
-    }
+    // public subscript<Subject>(dynamicMember keyPath: KeyPath<Value, Subject>) -> sending Subject {
+    //     yielding borrow {
+    //         lock.lock()
+    //         defer { lock.unlock() }
+    //         yield value[keyPath: keyPath]
+    //     }
+    // }
+
+    // public subscript<Subject>(
+    //     dynamicMember keyPath: WritableKeyPath<Value, Subject>
+    // ) -> sending Subject {
+    //     yielding borrow {
+    //         lock.lock()
+    //         defer { lock.unlock() }
+    //         yield value[keyPath: keyPath]
+    //     }
+    //     yielding mutate {
+    //         lock.lock()
+    //         defer { lock.unlock() }
+    //         yield &value[keyPath: keyPath]
+    //     }
+    //     set {
+    //         lock.lock()
+    //         defer { lock.unlock() }
+    //         value[keyPath: keyPath] = newValue
+    //     }
+    // }
 }
